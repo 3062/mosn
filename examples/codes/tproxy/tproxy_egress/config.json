@@ -1,30 +1,11 @@
 {
-	"servers":[
+	"servers": [
 		{
-			"default_log_path":"stdout",
+			"default_log_path": "stdout",
 			"routers": [
 				{
-                    "router_config_name": "tproxy_router",
-                    "virtual_hosts": [
-						{
-							"name": "tproxy_server",
-							"domains": [
-								"*"
-							],
-							"routers": [
-								{
-									"direct_response": {
-										"status": 200,
-										"body": "this is tproxy_server"
-									}
-								}
-							]
-						}
-                    ]
-                },
-				{
-                    "router_config_name": "general_router",
-                    "virtual_hosts": [
+					"router_config_name": "general_router",
+					"virtual_hosts": [
 						{
 							"name": "general_server",
 							"domains": [
@@ -39,60 +20,121 @@
 								}
 							]
 						}
-                    ]
-                }
+					]
+				}
 			],
-			"listeners":[
+			"listeners": [
 				{
-					"name":"tproxy_listener",
+					"name": "ingress_proxy",
 					"address": "0.0.0.0:16000",
-                    "bind_port": true,
+					"bind_port": true,
 					"use_original_dst": "tproxy",
 					"listener_filters": [
 						{
 							"type": "original_dst",
-							"config":{
+							"config": {
 								"type": "tproxy"
 							}
 						}
 					],
 					"filter_chains": [
-                        {
-                            "filters": [
-                                {
-                                    "type": "proxy",
-                                    "config": {
-                                        "downstream_protocol": "Auto",
-                                        "upstream_protocol": "Auto",
-                                        "router_config_name": "tproxy_router"
-                                    }
-                                }
-                            ]
-                        }
-                    ]
+						{
+							"filters": [
+								{
+									"type": "tcp_proxy",
+									"go_plugin_config": null,
+									"config": {
+										"cluster": "IngressPassthroughCluster"
+									}
+								}
+							]
+						}
+					]
 				},
 				{
-					"name": "general_listener",
-                    "address": "0.0.0.0:80",
-                    "bind_port": false,
-                    "filter_chains": [
-                        {
-                            "filters": [
-                                {
-                                    "type": "proxy",
-                                    "config": {
-                                        "downstream_protocol": "Auto",
-                                        "upstream_protocol": "Auto",
-                                        "router_config_name": "general_router"
-                                    }
-                                }
-                            ]
-                        }
-                    ]
+					"name": "egress_proxy",
+					"address": "0.0.0.0:16001",
+					"bind_port": true,
+					"use_original_dst": "tproxy",
+					"listener_filters": [
+						{
+							"type": "original_dst",
+							"config": {
+								"type": "tproxy"
+							}
+						}
+					],
+					"filter_chains": [
+						{
+							"filters": [
+								{
+									"type": "tcp_proxy",
+									"go_plugin_config": null,
+									"config": {
+										"cluster": "EgressPassthroughCluster"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "ingress_test",
+					"address": "0.0.0.0:80",
+					"bind_port": false,
+					"filter_chains": [
+						{
+							"filters": [
+								{
+									"type": "proxy",
+									"config": {
+										"downstream_protocol": "Auto",
+										"upstream_protocol": "Auto",
+										"router_config_name": "general_router"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "egress_test",
+					"address": "2.2.2.2:80",
+					"bind_port": false,
+					"filter_chains": [
+						{
+							"filters": [
+								{
+									"type": "proxy",
+									"config": {
+										"downstream_protocol": "Auto",
+										"upstream_protocol": "Auto",
+										"router_config_name": "general_router"
+									}
+								}
+							]
+						}
+					]
 				}
 			]
 		}
 	],
+	"cluster": {
+		"InboundPassthroughClusterIpv4": {
+			"name": "IngressPassthroughCluster",
+			"type": "ORIGINAL_DST",
+			"lb_type": "LB_ORIGINAL_DST",
+			"original_dst_lb_config": {
+				"replace_local": true
+			}
+		},
+		"PassthroughCluster": {
+			"name": "EgressPassthroughCluster",
+			"type": "ORIGINAL_DST",
+			"lb_type": "LB_ORIGINAL_DST",
+			"mark": 68
+		}
+	},
 	"admin": {
 		"address": {
 			"socket_address": {

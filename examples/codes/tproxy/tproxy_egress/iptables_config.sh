@@ -1,5 +1,8 @@
 #!/usr/bin/sudo /bin/bash
 
-tproxy_port=16000
-mark=1
-dports=(80 12345)
+ingress_port=16000
+ingress_mark=1
+passthrough_port=(ssh)
+
+egress_port=16001
+egress_mark=68
