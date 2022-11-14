@@ -5,4 +5,4 @@ ingress_mark=1
 passthrough_port=(ssh)
 
 egress_port=16001
-egress_mark=68
+egress_mark=2

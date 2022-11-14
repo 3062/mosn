@@ -2,6 +2,7 @@
 	"servers": [
 		{
 			"default_log_path": "stdout",
+			"default_log_level": "TRACE",
 			"routers": [
 				{
 					"router_config_name": "general_router",
@@ -119,21 +120,23 @@
 			]
 		}
 	],
-	"cluster": {
-		"InboundPassthroughClusterIpv4": {
-			"name": "IngressPassthroughCluster",
-			"type": "ORIGINAL_DST",
-			"lb_type": "LB_ORIGINAL_DST",
-			"original_dst_lb_config": {
-				"replace_local": true
+	"cluster_manager": {
+		"clusters": [
+			{
+				"name": "IngressPassthroughCluster",
+				"type": "ORIGINAL_DST",
+				"lb_type": "LB_ORIGINAL_DST",
+				"original_dst_lb_config": {
+					"replace_local": true
+				}
+			},
+			{
+				"name": "EgressPassthroughCluster",
+				"type": "ORIGINAL_DST",
+				"lb_type": "LB_ORIGINAL_DST",
+				"mark": 68
 			}
-		},
-		"PassthroughCluster": {
-			"name": "EgressPassthroughCluster",
-			"type": "ORIGINAL_DST",
-			"lb_type": "LB_ORIGINAL_DST",
-			"mark": 68
-		}
+		]
 	},
 	"admin": {
 		"address": {
