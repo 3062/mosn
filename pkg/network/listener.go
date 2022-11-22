@@ -28,6 +28,7 @@ import (
 	"syscall"
 	"time"
 
+	"golang.org/x/sys/unix"
 	v2 "mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/log"
 	"mosn.io/mosn/pkg/metrics"
@@ -399,6 +400,10 @@ func (l *listener) listen(lctx context.Context) error {
 						"failed to set socket opt IP_TRANSPARENT for listener %s: %s",
 						l.localAddress.String(), err.Error(),
 					)
+					log.DefaultLogger.Errorf(controlError.Error())
+				}
+				err = unix.SetsockoptInt(int(fd), unix.SOL_SOCKET, SO_MARK, 68)
+				if err != nil {
 					log.DefaultLogger.Errorf(controlError.Error())
 				}
 			}); err != nil {
