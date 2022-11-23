@@ -128,7 +128,8 @@
 				"lb_type": "LB_ORIGINAL_DST",
 				"original_dst_lb_config": {
 					"replace_local": true
-				}
+				},
+				"mark": 68
 			},
 			{
 				"name": "EgressPassthroughCluster",

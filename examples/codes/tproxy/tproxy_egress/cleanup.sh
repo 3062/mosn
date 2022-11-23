@@ -18,3 +18,5 @@ iptables -t mangle -D PREROUTING -p tcp -j TPROXY --on-port $ingress_port --tpro
 iptables -t mangle -D OUTPUT -p tcp -o lo -j ACCEPT
 iptables -t mangle -D OUTPUT -p tcp -m mark ! --mark 0 -j ACCEPT
 iptables -t mangle -D OUTPUT -p tcp -j MARK --set-mark $egress_mark
+
+iptables -t mangle -F
