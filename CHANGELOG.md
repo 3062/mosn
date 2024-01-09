@@ -1,5 +1,28 @@
 # Changelog
 
+## v1.7.0
+
+### New Features
+
+- PeakEWMA supports configuring different deviation values for client errors and server errors (#2337) @ncghost1
+- Support for setting the reuseport option on UDP listeners and connections (#2348) @dengqian
+- Trace integration OTel (#2359) (#2370) @971800718
+- XProtocol adds fast-failure health check functionality (#2364) (#2373) @hui-cha
+
+### Changes
+
+- Update dependencies (#2350) (#2351) (#2352) (#2353) @dependabot
+
+### Optimization
+
+- Reduce the UDP read buffer size (#2349) @dengqian
+
+### Bug fixes
+
+- New DNS message for each query to avoid being affected by the last query result (#2344) @dengqian
+- Fix unary recover without return error (#2363) @wenxuwan
+- Fix lbconfig didn't properly use default values (#2375) @NX-Official
+
 ## v1.6.0
 
 ### New Features
